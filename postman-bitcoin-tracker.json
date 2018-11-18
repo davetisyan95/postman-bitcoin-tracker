@@ -1,0 +1,181 @@
+{
+	"info": {
+		"_postman_id": "30833cbc-302b-4ebb-9475-c646c13ed622",
+		"name": "Bitcoin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/v1/bpi/currentprice.json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c4fece6b-5b4f-4ff3-acdb-aff5bfa5a239",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"var time = jsonData.time.updated; // Get the timestamp from the request",
+							"",
+							"// Read data from json response",
+							"var bitcoinPrice = jsonData.bpi.USD.rate_float;",
+							"var buyPrice = pm.environment.get(\"buyPrice\");",
+							"var sellPrice = pm.environment.get(\"sellPrice\");",
+							"",
+							"// Save price as Number objects to use in conditional if statements",
+							"var bitcoinPriceFloat = Number(bitcoinPrice);",
+							"var buyPriceFloat = Number(buyPrice);",
+							"var sellPriceFloat = Number(sellPrice);",
+							"",
+							"// Save as postman environment variables",
+							"pm.environment.set(\"currentBitcoinPrice\", bitcoinPrice); // Save the current price of BTC",
+							"pm.environment.set(\"currentTimeStamp\", time); // Save the time readTime of currentBitcoinPrice",
+							"",
+							"console.log(\"Your Buy Price is set at: \" + pm.environment.get(\"buyPrice\"));",
+							"console.log(\"Your Sell price is at: \" + pm.environment.get(\"sellPrice\"));",
+							"console.log(\"This is the price of Bitcoin: \" + bitcoinPrice + \" at \" + jsonData.time.updated);",
+							"console.log(\"Checking to see if you want to buy (\" + bitcoinPrice + \" < \" + buyPrice + \") \" + (bitcoinPriceFloat < buyPriceFloat).toString());",
+							"console.log(\"Checking to see if you want to sell (\" + bitcoinPrice + \" > \" + sellPrice + \") \" + (bitcoinPriceFloat > sellPriceFloat).toString());",
+							"",
+							"// Logic to send message if the prices is lower than the buyPrice",
+							"if (bitcoinPriceFloat < buyPriceFloat) { // If the price is above {{target}} send text",
+							"",
+							"    console.log(\"Sending a text message\");",
+							"    pm.environment.set(\"textMessage\", \"Hey \" + pm.environment.get(\"name\") + \", the price of bitcoin dopped to \" + bitcoinPrice + \" at \" + time + \". BUY NOW!\");",
+							"    postman.setNextRequest(\"https://api.twilio.com/2010-04-01/Accounts/SID/Messages.json\");",
+							"    ",
+							"} else if (bitcoinPriceFloat > sellPriceFloat) {",
+							"    ",
+							"    console.log(\"Sending a text message\");",
+							"    pm.environment.set(\"textMessage\", \"Hey \" + pm.environment.get(\"name\") + \", the price of bitcoin went up to \" + sellPrice + \" at \" + time + \". SELL NOW!\");",
+							"    postman.setNextRequest(\"https://api.twilio.com/2010-04-01/Accounts/SID/Messages.json\");",
+							"    ",
+							"} else { // Do not send text",
+							"    console.log(\"Not sending text message\");",
+							"    postman.setNextRequest(null);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{coindeskUrl}}/v1/bpi/currentprice.json/",
+					"host": [
+						"{{coindeskUrl}}"
+					],
+					"path": [
+						"v1",
+						"bpi",
+						"currentprice.json",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://api.twilio.com/2010-04-01/Accounts/SID/Messages.json",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2daf98c4-bb59-4413-837e-f2d9a7b4b0a2",
+						"exec": [
+							"var buyPriceFloat = Number(pm.environment.get(\"buyPrice\"));",
+							"var sellPriceFloat = Number(pm.environment.get(\"sellPrice\"));",
+							"",
+							"// Adjust floor and ceiling by -/+$50",
+							"pm.environment.set(\"buyPrice\", buyPriceFloat - 50);",
+							"pm.environment.set(\"sellPrice\", sellPriceFloat - 50);",
+							"",
+							"console.log(\"Setting buy price to \" + pm.environment.get(\"buyPrice\"));",
+							"console.log(\"Setting sell price to \" + pm.environment.get(\"sellPrice\"));",
+							"",
+							"var textMessage = pm.environment.get(\"textMessage\");",
+							"",
+							"textMessage += \" New buy price: \" + pm.environment.get(\"buyPrice\") + \". New sell price: \" + pm.environment.get(\"sellPrice\");",
+							"",
+							"var textMessage = pm.environment.set(\"textMessage\", textMessage);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "5d6f5247-279e-497f-a14f-b9c37aab204a",
+						"exec": [
+							"var buyPriceFloat = Number(pm.environment.get(\"buyPrice\"));",
+							"var sellPriceFloat = Number(pm.environment.get(\"sellPrice\"));",
+							"",
+							"// Adjust floor and ceiling by -/+$50",
+							"pm.environment.set(\"buyPrice\", buyPriceFloat - 50);",
+							"pm.environment.set(\"sellPrice\", sellPriceFloat - 50);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{twilioToken}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{accountSid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "To",
+							"value": "{{youPhoneNumber}}",
+							"type": "text"
+						},
+						{
+							"key": "From",
+							"value": "{{twilioNumber}}",
+							"type": "text"
+						},
+						{
+							"key": "Body",
+							"value": "{{textMessage}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.twilio.com/2010-04-01/Accounts/{{accountSid}}/Messages.json",
+					"protocol": "https",
+					"host": [
+						"api",
+						"twilio",
+						"com"
+					],
+					"path": [
+						"2010-04-01",
+						"Accounts",
+						"{{accountSid}}",
+						"Messages.json"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

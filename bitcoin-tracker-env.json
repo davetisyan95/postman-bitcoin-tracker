@@ -1,0 +1,104 @@
+{
+	"id": "c36d80ca-98f0-458c-8882-784ffa4ac8c5",
+	"name": "Bitcoin Tracker",
+	"values": [
+		{
+			"key": "coindeskUrl",
+			"value": "https://api.coindesk.com",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "twilioUrl",
+			"value": "https://api.twilio.com",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "currentBitcoinPrice",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "accountSid",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "twilioToken",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "buyPrice",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "sellPrice",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "textMessage",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			},
+			"enabled": true
+		},
+		{
+			"key": "currentTimeStamp",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "twilioNumber",
+			"value": "",
+			"description": "",
+			"enabled": true
+		},
+		{
+			"key": "youPhoneNumber",
+			"value": "",
+			"description": "",
+			"enabled": true
+		},
+		{
+			"key": "name",
+			"value": "",
+			"description": "",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2018-11-18T02:21:43.842Z",
+	"_postman_exported_using": "Postman/6.4.4"
+}
